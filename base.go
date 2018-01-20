@@ -46,6 +46,10 @@ func SetLed(ledValue byte) {
 	spiWrite8(bp_MSG_SET_LED, ledValue)
 }
 
+func ResetAll() {
+	SetSensorType(PORT_1+PORT_2+PORT_3+PORT_4, SENSOR_TYPE_NONE)
+}
+
 func Close() {
 	BP.Close()
 }
