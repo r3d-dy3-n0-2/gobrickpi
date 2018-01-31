@@ -1,7 +1,6 @@
 package gobrickpi
 
 import (
-	"fmt"
 	"log"
 )
 
@@ -45,8 +44,6 @@ func GetSensorValue(port uint) (sensorValue int) {
 
 	}
 
-	fmt.Println(sensorPortConfig)
-
 	switch sensorPortConfig[portIndex] {
 
 	case SENSOR_TYPE_TOUCH,
@@ -60,7 +57,6 @@ func GetSensorValue(port uint) (sensorValue int) {
 
 		outData = []byte{address, msgType, 0, 0, 0, 0, 0}
 		spiTransfer(outData)
-		fmt.Println(outData)
 		sensorValue = int(outData[6])
 
 	default:

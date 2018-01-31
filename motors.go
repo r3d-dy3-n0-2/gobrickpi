@@ -2,6 +2,8 @@ package gobrickpi
 
 import "log"
 
+const MOTOR_FLOAT = -128
+
 func GetMotorStatus(port byte) (state uint8, power int8, position int32, dps int16) {
 	/*Read motor status
 	  Works on on port at a time
@@ -108,8 +110,39 @@ func SetMotorPositionKD(port byte, kd byte) {
 	spiTransfer(dataIn)
 }
 
-func setMotorDPS(port byte, dps int) {
+func SetMotorDPS(port byte, dps int) {
 	/* Set the motor target speed in degress per second*/
 	dataIn := []byte{address, bp_MSG_SET_MOTOR_DPS, port, byte((dps >> 8) & 0xFF), byte(dps & 0xFF)}
 	spiTransfer(dataIn)
+}
+
+func OffsetMotorEncoder(port byte, position int32) {
+
+	dataIn := []byte{address, bp_MSG_OFFSET_MOTOR_ENCODER, port, byte((position >> 24) & 0xFF), byte((position >> 16) & 0xFF), byte((position >> 8) & 0xFF), byte(position & 0xFF)}
+	spiTransfer(dataIn)
+}
+
+func GetMotorEncoder(port byte) (encoder int32) {
+	/* Read motor encoder in degrees
+	 */
+	var msgType byte
+	switch port {
+
+	case PORT_A:
+		msgType = bp_MSG_GET_MOTOR_A_ENCODER
+
+	case PORT_B:
+		msgType = bp_MSG_GET_MOTOR_B_ENCODER
+
+	case PORT_C:
+		msgType = bp_MSG_GET_MOTOR_C_ENCODER
+
+	case PORT_D:
+		msgType = bp_MSG_GET_MOTOR_D_ENCODER
+
+	default:
+		log.Fatal("Can only get status of one motor port at a time!")
+	}
+	encoder = spiRead32(msgType)
+	return encoder
 }

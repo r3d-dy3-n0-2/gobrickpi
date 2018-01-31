@@ -172,7 +172,7 @@ func spiRead16(msg byte) (reply int) {
 	return (int(outData[4]) << 8) | int(outData[5])
 }
 
-func spiRead32(msg byte) (reply int) {
+func spiRead32(msg byte) (reply int32) {
 
 	outData := []byte{address, msg, 0, 0, 0, 0, 0, 0}
 	err := BP.Transfer(outData)
@@ -184,5 +184,5 @@ func spiRead32(msg byte) (reply int) {
 	if outData[3] != 0xA5 {
 		log.Fatal(err)
 	}
-	return int((int(outData[4]) << 24) | (int(outData[5]) << 16) | (int(outData[6]) << 8) | int(outData[7]))
+	return int32((int(outData[4]) << 24) | (int(outData[5]) << 16) | (int(outData[6]) << 8) | int(outData[7]))
 }

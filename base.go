@@ -30,7 +30,8 @@ func Start() {
 
 		sig := <-sigs
 		fmt.Println(sig)
-		SetLed(255)
+		ResetAll()
+		//time.Sleep(200 * time.Millisecond)
 		BP.Close()
 		os.Exit(1)
 	}()
@@ -47,7 +48,15 @@ func SetLed(ledValue byte) {
 }
 
 func ResetAll() {
-	SetSensorType(PORT_1+PORT_2+PORT_3+PORT_4, SENSOR_TYPE_NONE)
+	/* Reset all sensor types to NONE and reset all motor values, also return LED function back to brickpi firmware*/
+
+	SetSensorType(PORT_1+PORT_2+PORT_3+PORT_4, SENSOR_TYPE_NONE) // Reset all sensor types
+	SetMotorPower(PORT_A+PORT_B+PORT_C+PORT_D, MOTOR_FLOAT)      // Turn off all motors
+	SetMotorLimits(PORT_A+PORT_B+PORT_C+PORT_D, 0, 0)
+	SetMotorPositionKP(PORT_A+PORT_B+PORT_C+PORT_D, 0)
+	SetMotorPositionKD(PORT_A+PORT_B+PORT_C+PORT_D, 0)
+	SetLed(255)
+
 }
 
 func Close() {
