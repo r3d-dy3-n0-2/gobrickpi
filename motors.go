@@ -79,6 +79,16 @@ func SetMotorPosition(port byte, position int32) {
 
 }
 
+func SetMotorPositionRelative(port byte, degrees int32) {
+
+	for i := uint(0); i < 4; i++ {
+		if (uint(port) & (1 << i)) != 0 {
+			SetMotorPosition((1 << i), (GetMotorEncoder(1<<i) + degrees))
+		}
+
+	}
+}
+
 func SetMotorPositionKP(port byte, kp byte) {
 	/* Set the motor target position KP constant
 
@@ -144,5 +154,25 @@ func GetMotorEncoder(port byte) (encoder int32) {
 		log.Fatal("Can only get status of one motor port at a time!")
 	}
 	encoder = spiRead32(msgType)
+
+	if (int64(encoder) & 0x80000000) != 0 {
+		encoder = int32(int64(encoder) - 0x100000000)
+	}
 	return encoder
+}
+func ResetMotorEncoder(port byte) {
+
+	switch port {
+	case PORT_A:
+		OffsetMotorEncoder(PORT_A, GetMotorEncoder(PORT_A))
+
+	case PORT_B:
+		OffsetMotorEncoder(PORT_B, GetMotorEncoder(PORT_B))
+
+	case PORT_C:
+		OffsetMotorEncoder(PORT_C, GetMotorEncoder(PORT_C))
+
+	case PORT_D:
+		OffsetMotorEncoder(PORT_D, GetMotorEncoder(PORT_D))
+	}
 }
